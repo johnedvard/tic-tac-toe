@@ -1,7 +1,5 @@
 function love.load()
-	isPlayerOnesTurn = true
 	markThatWon = {}
-	currentTicTacToePos = {}
 	width = love.graphics.getWidth( )
 	height = love.graphics.getHeight( )
 
@@ -12,7 +10,7 @@ function love.load()
 end
 
 function love.draw()
-    drawBardState()
+    drawBoardState()
     drawBoardLines()
     if hasWon() then
 		love.graphics.setColor(255,255,255,255)
@@ -53,48 +51,48 @@ function smartHasWon(mark)
 end
 
 function love.mousereleased(x, y, button)
-   if button == 1 then -- 1 is the mouse button
-   		currentTicTacToePos = getTicTacToePos(x,y)
-   		if not hasWon() and isLegalMove() then
-   			doMove()
-   		end
-   end
+    if button == 1 then -- 1 is the mouse button
+        currentTicTacToePos = getTicTacToePos(x,y)
+        if isLegalMove(currentTicTacToePos) then
+            doMove(currentTicTacToePos)
+        end
+    end
 end
 
-function doMove()
-	playerMark = "X"
-	if not isPlayerOnesTurn then
-		playerMark = "O"
-	end
-	board[currentTicTacToePos[1]][currentTicTacToePos[2]] = playerMark
-	isPlayerOnesTurn = not isPlayerOnesTurn
+function doMove(currentTicTacToePos)
+    playerMark = "O"
+    if isPlayerOnesTurn then 
+        playerMark = "X"
+    end
+    board[currentTicTacToePos[1]][currentTicTacToePos[2]] = playerMark -- setting the state of the board at current pos.
+    isPlayerOnesTurn = not isPlayerOnesTurn -- toggles the value when using the 'not' key word.
 end
 
-function isLegalMove()
+function isLegalMove(currentTicTacToePos)
 	return board[currentTicTacToePos[1]][currentTicTacToePos[2]] == " "
 end	
 
-function getTicTacToePos(x,y)
-	ticTacToePos = {}
-	if x <= width/3 then 
-		ticTacToePos[1] = 1
-	elseif x >= width/3 and x < width/3*2 then
-		ticTacToePos[1] = 2
-	elseif x >= width/3*2 then
-		ticTacToePos[1] = 3
-	end
+function getTicTacToePos(mouseX,mouseY)
+    ticTacToePos = {}
+    if mouseX <= width/3 then
+        ticTacToePos[1] = 1
+    elseif mouseX >= width/3 and mouseX < width/3*2 then 
+        ticTacToePos[1] = 2
+    elseif mouseX >= width/3*2 then
+        ticTacToePos[1] = 3
+    end
 
-	if y <= height/3 then
+	if mouseY <= height/3 then
 		ticTacToePos[2] = 1
-	elseif y <= height/3*2 and y >= height/3 then
+	elseif mouseY <= height/3*2 and mouseY >= height/3 then
 		ticTacToePos[2] = 2
-	elseif y <= height and y>= height/3*2 then
+	elseif mouseY <= height and mouseY>= height/3*2 then
 		ticTacToePos[2] = 3
 	end
-	return ticTacToePos
+    return ticTacToePos
 end
 
-function drawBardState()
+function drawBoardState()
     for i=1,3 do
 		for j=1,3 do
 			fillSquare(i,j,board[i][j])
